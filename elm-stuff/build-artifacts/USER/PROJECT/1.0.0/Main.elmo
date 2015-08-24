@@ -1,0 +1,78 @@
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Main",
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var render = function (_v0) {
+      return function () {
+         switch (_v0.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var forms = _L.fromArray([$Graphics$Collage.move({ctor: "_Tuple2"
+                                                                  ,_0: $Basics.toFloat(_v0._0)
+                                                                  ,_1: $Basics.toFloat(_v0._1)})($Graphics$Collage.filled($Color.blue)($Graphics$Collage.circle(15)))]);
+                 return $Graphics$Element.color($Color.gray)(A3($Graphics$Collage.collage,
+                 400,
+                 400,
+                 forms));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 19 and 21");
+      }();
+   };
+   var center = function (_v4) {
+      return function () {
+         switch (_v4.ctor)
+         {case "_Tuple2":
+            return {ctor: "_Tuple2"
+                   ,_0: _v4._0 / 2 | 0
+                   ,_1: _v4._1 / 2 | 0};}
+         _U.badCase($moduleName,
+         "on line 16, column 18 to 32");
+      }();
+   };
+   var relativeMouse = F2(function (_v8,
+   _v9) {
+      return function () {
+         switch (_v9.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v8.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple2"
+                           ,_0: _v9._0 - _v8._0
+                           ,_1: 0 - (_v9._1 - _v8._1)};}
+                 _U.badCase($moduleName,
+                 "on line 13, column 33 to 50");
+              }();}
+         _U.badCase($moduleName,
+         "on line 13, column 33 to 50");
+      }();
+   });
+   var main = $Signal.map(render)(A2($Signal._op["<~"],
+   relativeMouse({ctor: "_Tuple2"
+                 ,_0: 200
+                 ,_1: 200}),
+   $Mouse.position));
+   _elm.Main.values = {_op: _op
+                      ,main: main
+                      ,relativeMouse: relativeMouse
+                      ,center: center
+                      ,render: render};
+   return _elm.Main.values;
+};
