@@ -17,62 +17,276 @@ Elm.Main.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Mouse = Elm.Mouse.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var render = function (_v0) {
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var delta = $Time.fps(30);
+   var stepPlayer = F2(function (_v0,
+   p) {
       return function () {
          switch (_v0.ctor)
          {case "_Tuple2":
-            return function () {
-                 var forms = _L.fromArray([$Graphics$Collage.move({ctor: "_Tuple2"
-                                                                  ,_0: $Basics.toFloat(_v0._0)
-                                                                  ,_1: $Basics.toFloat(_v0._1)})($Graphics$Collage.filled($Color.blue)($Graphics$Collage.circle(15)))]);
-                 return $Graphics$Element.color($Color.gray)(A3($Graphics$Collage.collage,
-                 400,
-                 400,
-                 forms));
-              }();}
+            return _U.replace([["pos"
+                               ,{ctor: "_Tuple2"
+                                ,_0: $Basics.toFloat(_v0._0)
+                                ,_1: $Basics.toFloat(_v0._1)}]],
+              p);}
          _U.badCase($moduleName,
-         "between lines 19 and 21");
+         "on line 60, column 23 to 60");
       }();
-   };
-   var center = function (_v4) {
+   });
+   var Game = F2(function (a,b) {
+      return {_: {}
+             ,pills: b
+             ,player: a};
+   });
+   var Pill = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,col: d
+             ,pos: a
+             ,rad: c
+             ,vel: b};
+   });
+   var vecMulS = F2(function (_v4,
+   t) {
       return function () {
          switch (_v4.ctor)
          {case "_Tuple2":
             return {ctor: "_Tuple2"
-                   ,_0: _v4._0 / 2 | 0
-                   ,_1: _v4._1 / 2 | 0};}
+                   ,_0: _v4._0 * t
+                   ,_1: _v4._1 * t};}
          _U.badCase($moduleName,
-         "on line 16, column 18 to 32");
-      }();
-   };
-   var relativeMouse = F2(function (_v8,
-   _v9) {
-      return function () {
-         switch (_v9.ctor)
-         {case "_Tuple2":
-            return function () {
-                 switch (_v8.ctor)
-                 {case "_Tuple2":
-                    return {ctor: "_Tuple2"
-                           ,_0: _v9._0 - _v8._0
-                           ,_1: 0 - (_v9._1 - _v8._1)};}
-                 _U.badCase($moduleName,
-                 "on line 13, column 33 to 50");
-              }();}
-         _U.badCase($moduleName,
-         "on line 13, column 33 to 50");
+         "on line 35, column 20 to 28");
       }();
    });
-   var main = $Signal.map(render)(A2($Signal._op["<~"],
-   relativeMouse({ctor: "_Tuple2"
-                 ,_0: 200
-                 ,_1: 200}),
-   $Mouse.position));
+   var vecLen = function (_v8) {
+      return function () {
+         switch (_v8.ctor)
+         {case "_Tuple2":
+            return $Basics.sqrt(_v8._0 * _v8._1 + _v8._1 * _v8._1);}
+         _U.badCase($moduleName,
+         "on line 32, column 17 to 32");
+      }();
+   };
+   var vecSub = F2(function (_v12,
+   _v13) {
+      return function () {
+         switch (_v13.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v12.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple2"
+                           ,_0: _v12._0 - _v13._0
+                           ,_1: _v12._1 - _v13._1};}
+                 _U.badCase($moduleName,
+                 "on line 29, column 27 to 39");
+              }();}
+         _U.badCase($moduleName,
+         "on line 29, column 27 to 39");
+      }();
+   });
+   var vecAdd = F2(function (_v20,
+   _v21) {
+      return function () {
+         switch (_v21.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v20.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple2"
+                           ,_0: _v20._0 + _v21._0
+                           ,_1: _v20._1 + _v21._1};}
+                 _U.badCase($moduleName,
+                 "on line 26, column 27 to 39");
+              }();}
+         _U.badCase($moduleName,
+         "on line 26, column 27 to 39");
+      }();
+   });
+   var stepPill = F2(function (t,
+   p) {
+      return _U.replace([["pos"
+                         ,vecAdd(p.pos)(A2(vecMulS,
+                         p.vel,
+                         t))]],
+      p);
+   });
+   var stepGame = F2(function (_v28,
+   _v29) {
+      return function () {
+         return function () {
+            switch (_v28.ctor)
+            {case "_Tuple2":
+               return function () {
+                    var hit = function (pill) {
+                       return _U.cmp(vecLen(A2(vecSub,
+                       _v29.player.pos,
+                       pill.pos)),
+                       _v29.player.rad + pill.rad) < 0;
+                    };
+                    var untouched = A2($List.filter,
+                    function ($) {
+                       return $Basics.not(hit($));
+                    },
+                    _v29.pills);
+                    return _U.replace([["player"
+                                       ,A2(stepPlayer,
+                                       _v28._1,
+                                       _v29.player)]
+                                      ,["pills"
+                                       ,A2($List.map,
+                                       stepPill(_v28._0),
+                                       untouched)]],
+                    _v29);
+                 }();}
+            _U.badCase($moduleName,
+            "between lines 54 and 57");
+         }();
+      }();
+   });
+   var center = function (_v34) {
+      return function () {
+         switch (_v34.ctor)
+         {case "_Tuple2":
+            return {ctor: "_Tuple2"
+                   ,_0: _v34._0 / 2 | 0
+                   ,_1: _v34._1 / 2 | 0};}
+         _U.badCase($moduleName,
+         "on line 21, column 18 to 32");
+      }();
+   };
+   var $ = {ctor: "_Tuple2"
+           ,_0: 400
+           ,_1: 400},
+   width = $._0,
+   height = $._1;
+   var $ = {ctor: "_Tuple2"
+           ,_0: width / 2
+           ,_1: height / 2},
+   hWidth = $._0,
+   hHeight = $._1;
+   var defaultPill = {_: {}
+                     ,col: $Color.lightRed
+                     ,pos: {ctor: "_Tuple2"
+                           ,_0: 0
+                           ,_1: hHeight}
+                     ,rad: 15
+                     ,vel: {ctor: "_Tuple2"
+                           ,_0: 0
+                           ,_1: -30}};
+   var defaultPlayer = _U.replace([["pos"
+                                   ,{ctor: "_Tuple2",_0: 0,_1: 0}]
+                                  ,["col",$Color.black]],
+   defaultPill);
+   var defaultGame = {_: {}
+                     ,pills: A2($List.map,
+                     function (i) {
+                        return _U.replace([["pos"
+                                           ,{ctor: "_Tuple2"
+                                            ,_0: i * 50
+                                            ,_1: hHeight}]],
+                        defaultPill);
+                     },
+                     _L.range(0,3))
+                     ,player: defaultPlayer};
+   var render = F2(function (_v38,
+   game) {
+      return function () {
+         switch (_v38.ctor)
+         {case "_Tuple2":
+            return function () {
+                 var formPill = function (_v42) {
+                    return function () {
+                       return $Graphics$Collage.move(_v42.pos)($Graphics$Collage.filled(_v42.col)($Graphics$Collage.circle(_v42.rad)));
+                    }();
+                 };
+                 var forms = A2($List._op["::"],
+                 formPill(game.player),
+                 A2($List.map,
+                 formPill,
+                 game.pills));
+                 return $Graphics$Element.color($Color.lightGray)(A3($Graphics$Element.container,
+                 _v38._0,
+                 _v38._1,
+                 $Graphics$Element.middle)($Graphics$Element.color($Color.white)(A3($Graphics$Collage.collage,
+                 width,
+                 height,
+                 forms))));
+              }();}
+         _U.badCase($moduleName,
+         "between lines 67 and 73");
+      }();
+   });
+   var relativeMouse = F2(function (_v44,
+   _v45) {
+      return function () {
+         switch (_v45.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v44.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple2"
+                           ,_0: _v45._0 - _v44._0
+                           ,_1: 0 - (_v45._1 - _v44._1)};}
+                 _U.badCase($moduleName,
+                 "on line 15, column 33 to 50");
+              }();}
+         _U.badCase($moduleName,
+         "on line 15, column 33 to 50");
+      }();
+   });
+   var input = A2($Signal._op["~"],
+   A2($Signal._op["<~"],
+   F2(function (v0,v1) {
+      return {ctor: "_Tuple2"
+             ,_0: v0
+             ,_1: v1};
+   }),
+   A2($Signal.map,
+   $Time.inSeconds,
+   delta)),
+   A2($Signal.sampleOn,
+   delta,
+   A3($Signal.map2,
+   relativeMouse,
+   A2($Signal.map,
+   center,
+   $Window.dimensions),
+   $Mouse.position)));
+   var main = A2($Signal._op["~"],
+   A2($Signal._op["<~"],
+   render,
+   $Window.dimensions),
+   A3($Signal.foldp,
+   stepGame,
+   defaultGame,
+   input));
    _elm.Main.values = {_op: _op
                       ,main: main
                       ,relativeMouse: relativeMouse
+                      ,height: height
+                      ,width: width
+                      ,hHeight: hHeight
+                      ,hWidth: hWidth
                       ,center: center
-                      ,render: render};
+                      ,vecAdd: vecAdd
+                      ,vecSub: vecSub
+                      ,vecLen: vecLen
+                      ,vecMulS: vecMulS
+                      ,Pill: Pill
+                      ,defaultPill: defaultPill
+                      ,defaultPlayer: defaultPlayer
+                      ,Game: Game
+                      ,defaultGame: defaultGame
+                      ,stepGame: stepGame
+                      ,stepPlayer: stepPlayer
+                      ,stepPill: stepPill
+                      ,render: render
+                      ,delta: delta
+                      ,input: input};
    return _elm.Main.values;
 };

@@ -4,18 +4,74 @@ import Color exposing (..)
 import Mouse
 import Signal exposing (..)
 import Window
+import List exposing (..)
+import Time exposing (..)
 
 main : Signal Element
 main =
-  Signal.map render <| relativeMouse (200, 200)<~ Mouse.position
+  render <~ Window.dimensions ~ foldp stepGame defaultGame input
 
 relativeMouse : (Int, Int) -> (Int, Int) -> (Int, Int)
 relativeMouse (ox, oy) (x,y) = (x - ox, -(y - oy))
 
+(width, height) = (400, 400)
+(hWidth, hHeight) = (width / 2, height / 2)
+
 center : (Int, Int) -> (Int, Int)
 center (w, h) = (w // 2, h // 2)
 
-render (x, y) =
-  let forms = [circle 15 |> filled blue
-                         |> move (toFloat x, toFloat y) ]
-  in color gray <| collage 400 400 forms
+type alias Vec = ( Float, Float )
+
+vecAdd : Vec -> Vec -> Vec
+vecAdd (px,py) (vx,vy) = (px+vx, py+vy)
+
+vecSub : Vec -> Vec -> Vec
+vecSub (px,py) (vx,vy) = (px-vx, py-vy)
+
+vecLen : Vec -> Float
+vecLen (x, y) = sqrt (x*y + y*y) 
+
+vecMulS : Vec -> Time -> Vec
+vecMulS (x,y) t = (x*t, y*t)
+
+type alias Pill = { pos:Vec, vel:Vec, rad:Float, col:Color }
+
+defaultPill = { pos = (0, hHeight)
+              , vel = (0, -30)
+              , rad = 15
+              , col = lightRed }
+
+defaultPlayer = { defaultPill | pos <- (0,0)
+                                ,col <- black }
+
+type alias Game = {player:Pill, pills:(List Pill) }
+
+defaultGame = { player = defaultPlayer,
+                pills  = List.map (\i -> { defaultPill | pos <- (i*50, hHeight) }) [0..3] }
+
+stepGame : (Time, (Int, Int)) -> Game -> Game
+stepGame (t, mp) ({player, pills} as g) =
+  let hit pill = (vecLen <| vecSub player.pos pill.pos) < player.rad + pill.rad
+      untouched = List.filter (not << hit) pills
+  in { g | player <- stepPlayer mp player
+     , pills <- List.map (stepPill t) untouched }
+
+stepPlayer : (Int, Int) -> Pill -> Pill
+stepPlayer (x, y) p = { p | pos <- (toFloat x, toFloat y) }
+
+stepPill : Time -> Pill -> Pill
+stepPill t p = { p | pos <- vecAdd p.pos <| vecMulS p.vel t}
+
+render : (Int, Int) -> Game -> Element
+render (w, h) game =
+  let formPill {rad, col, pos} = circle rad |> filled col
+                                            |> move pos
+      forms = formPill game.player :: List.map formPill game.pills
+  in color lightGray
+       <| container w h middle
+       <| color white
+       <| collage width height forms
+
+delta = (fps 30)
+input = (,) <~ Signal.map inSeconds delta
+             ~ sampleOn delta (Signal.map2 relativeMouse (Signal.map center Window.dimensions) Mouse.position)
