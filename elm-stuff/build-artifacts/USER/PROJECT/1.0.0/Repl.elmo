@@ -12,41 +12,16 @@ Elm.Repl.make = function (_elm) {
    $Basics = Elm.Basics.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Random = Elm.Random.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
    var tsol = {ctor: "_Tuple0"};
-   var pills = _L.fromArray([]);
-   var defaultPill = {_: {}
-                     ,pos: {ctor: "_Tuple2"
-                           ,_0: 0
-                           ,_1: 1}
-                     ,rad: 15
-                     ,vel: {ctor: "_Tuple2"
-                           ,_0: 0
-                           ,_1: -30}};
-   var b = {ctor: "_Tuple2"
-           ,_0: 1
-           ,_1: 2};
-   var a = {ctor: "_Tuple2"
-           ,_0: 1
-           ,_1: 1};
-   var c = _L.fromArray([a]);
-   var deltron3030 = _U.cmp($Basics.fst(a),
-   1) > 0;
-   var Pill = F3(function (a,b,c) {
-      return {_: {}
-             ,pos: a
-             ,rad: c
-             ,vel: b};
-   });
+   var deltron3030 = A2($Signal._op["<~"],
+   $Random.$float,
+   $Time.every($Time.second * 3));
    _elm.Repl.values = {_op: _op
-                      ,Pill: Pill
-                      ,a: a
-                      ,b: b
-                      ,c: c
-                      ,defaultPill: defaultPill
                       ,deltron3030: deltron3030
-                      ,pills: pills
                       ,tsol: tsol};
    return _elm.Repl.values;
 };

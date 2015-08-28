@@ -6,6 +6,7 @@ import Signal exposing (..)
 import Window
 import List exposing (..)
 import Time exposing (..)
+import Random exposing (..)
 
 relativeMouse : (Int, Int) -> (Int, Int) -> (Int, Int)
 relativeMouse (ox, oy) (x,y) = (x - ox, -(y - oy))
@@ -45,6 +46,9 @@ type alias Game = {player:Pill, pills:(List Pill) }
 defaultGame = { player = defaultPlayer,
                 pills  = [] }
 
+newPill : Float -> Pill
+newPill x = { defaultPill | pos <- (x, hHeight) }
+
 type Event = Tick (Time, (Int, Int)) | Add Pill
 
 stepGame : Event -> Game -> Game
@@ -77,7 +81,14 @@ delta = (fps 30)
 input = (,) <~ Signal.map inSeconds delta
              ~ sampleOn delta (Signal.map2 relativeMouse (Signal.map center Window.dimensions) Mouse.position)
 
-event = Signal.merge (Signal.map Tick input) (Signal.map (Add << (\_ -> defaultPill)) (every (second *3)))
+randx sig = let rnd = positiveFloat
+                coord r = (width * r) - hWidth
+            in Signal.map coord rnd
+
+event =
+  Signal.merge
+          (Signal.map Tick input)
+          (Signal.map (Add << newPill) <| randx (every (second * 3)))
                             
 main : Signal Element
 main = render <~ Window.dimensions ~ foldp stepGame defaultGame event
