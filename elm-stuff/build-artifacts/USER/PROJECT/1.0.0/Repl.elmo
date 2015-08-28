@@ -15,18 +15,38 @@ Elm.Repl.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm);
    var tsol = {ctor: "_Tuple0"};
-   var relativeMouse = function (mp) {
-      return mp;
-   };
-   var deltron3030 = F2(function (x,
-   y) {
-      return A2($Signal._op["<~"],
-      x,
-      y);
+   var pills = _L.fromArray([]);
+   var defaultPill = {_: {}
+                     ,pos: {ctor: "_Tuple2"
+                           ,_0: 0
+                           ,_1: 1}
+                     ,rad: 15
+                     ,vel: {ctor: "_Tuple2"
+                           ,_0: 0
+                           ,_1: -30}};
+   var b = {ctor: "_Tuple2"
+           ,_0: 1
+           ,_1: 2};
+   var a = {ctor: "_Tuple2"
+           ,_0: 1
+           ,_1: 1};
+   var c = _L.fromArray([a]);
+   var deltron3030 = _U.cmp($Basics.fst(a),
+   1) > 0;
+   var Pill = F3(function (a,b,c) {
+      return {_: {}
+             ,pos: a
+             ,rad: c
+             ,vel: b};
    });
    _elm.Repl.values = {_op: _op
+                      ,Pill: Pill
+                      ,a: a
+                      ,b: b
+                      ,c: c
+                      ,defaultPill: defaultPill
                       ,deltron3030: deltron3030
-                      ,relativeMouse: relativeMouse
+                      ,pills: pills
                       ,tsol: tsol};
    return _elm.Repl.values;
 };

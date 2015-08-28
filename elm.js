@@ -1931,9 +1931,15 @@ Elm.Main.make = function (_elm) {
                                 ,_1: $Basics.toFloat(_v0._1)}]],
               p);}
          _U.badCase($moduleName,
-         "on line 60, column 23 to 60");
+         "on line 61, column 23 to 60");
       }();
    });
+   var Add = function (a) {
+      return {ctor: "Add",_0: a};
+   };
+   var Tick = function (a) {
+      return {ctor: "Tick",_0: a};
+   };
    var Game = F2(function (a,b) {
       return {_: {}
              ,pills: b
@@ -1958,7 +1964,7 @@ Elm.Main.make = function (_elm) {
                    ,_0: _v4._0 * t
                    ,_1: _v4._1 * t};}
          _U.badCase($moduleName,
-         "on line 35, column 20 to 28");
+         "on line 31, column 20 to 28");
       }();
    });
    var vecLen = function (_v8) {
@@ -1967,7 +1973,7 @@ Elm.Main.make = function (_elm) {
          {case "_Tuple2":
             return $Basics.sqrt(_v8._0 * _v8._1 + _v8._1 * _v8._1);}
          _U.badCase($moduleName,
-         "on line 32, column 17 to 32");
+         "on line 28, column 17 to 32");
       }();
    };
    var vecSub = F2(function (_v12,
@@ -1982,10 +1988,10 @@ Elm.Main.make = function (_elm) {
                            ,_0: _v12._0 - _v13._0
                            ,_1: _v12._1 - _v13._1};}
                  _U.badCase($moduleName,
-                 "on line 29, column 27 to 39");
+                 "on line 25, column 27 to 39");
               }();}
          _U.badCase($moduleName,
-         "on line 29, column 27 to 39");
+         "on line 25, column 27 to 39");
       }();
    });
    var vecAdd = F2(function (_v20,
@@ -2000,10 +2006,10 @@ Elm.Main.make = function (_elm) {
                            ,_0: _v20._0 + _v21._0
                            ,_1: _v20._1 + _v21._1};}
                  _U.badCase($moduleName,
-                 "on line 26, column 27 to 39");
+                 "on line 22, column 27 to 39");
               }();}
          _U.badCase($moduleName,
-         "on line 26, column 27 to 39");
+         "on line 22, column 27 to 39");
       }();
    });
    var stepPill = F2(function (t,
@@ -2014,48 +2020,15 @@ Elm.Main.make = function (_elm) {
                          t))]],
       p);
    });
-   var stepGame = F2(function (_v28,
-   _v29) {
+   var center = function (_v28) {
       return function () {
-         return function () {
-            switch (_v28.ctor)
-            {case "_Tuple2":
-               return function () {
-                    var hit = function (pill) {
-                       return _U.cmp(vecLen(A2(vecSub,
-                       _v29.player.pos,
-                       pill.pos)),
-                       _v29.player.rad + pill.rad) < 0;
-                    };
-                    var untouched = A2($List.filter,
-                    function ($) {
-                       return $Basics.not(hit($));
-                    },
-                    _v29.pills);
-                    return _U.replace([["player"
-                                       ,A2(stepPlayer,
-                                       _v28._1,
-                                       _v29.player)]
-                                      ,["pills"
-                                       ,A2($List.map,
-                                       stepPill(_v28._0),
-                                       untouched)]],
-                    _v29);
-                 }();}
-            _U.badCase($moduleName,
-            "between lines 54 and 57");
-         }();
-      }();
-   });
-   var center = function (_v34) {
-      return function () {
-         switch (_v34.ctor)
+         switch (_v28.ctor)
          {case "_Tuple2":
             return {ctor: "_Tuple2"
-                   ,_0: _v34._0 / 2 | 0
-                   ,_1: _v34._1 / 2 | 0};}
+                   ,_0: _v28._0 / 2 | 0
+                   ,_1: _v28._1 / 2 | 0};}
          _U.badCase($moduleName,
-         "on line 21, column 18 to 32");
+         "on line 17, column 18 to 32");
       }();
    };
    var $ = {ctor: "_Tuple2"
@@ -2082,25 +2055,65 @@ Elm.Main.make = function (_elm) {
                                   ,["col",$Color.black]],
    defaultPill);
    var defaultGame = {_: {}
-                     ,pills: A2($List.map,
-                     function (i) {
-                        return _U.replace([["pos"
-                                           ,{ctor: "_Tuple2"
-                                            ,_0: i * 50
-                                            ,_1: hHeight}]],
-                        defaultPill);
-                     },
-                     _L.range(0,3))
+                     ,pills: _L.fromArray([])
                      ,player: defaultPlayer};
-   var render = F2(function (_v38,
+   var stepGame = F2(function (event,
+   _v32) {
+      return function () {
+         return function () {
+            switch (event.ctor)
+            {case "Add":
+               return _U.replace([["pills"
+                                  ,A2($List._op["::"],
+                                  event._0,
+                                  _v32.pills)]],
+                 _v32);
+               case "Tick":
+               switch (event._0.ctor)
+                 {case "_Tuple2":
+                    return function () {
+                         var unculled = A2($List.filter,
+                         function (pill) {
+                            return _U.cmp($Basics.snd(pill.pos),
+                            0 - hHeight) > 0;
+                         },
+                         _v32.pills);
+                         var hit = function (pill) {
+                            return _U.cmp(vecLen(A2(vecSub,
+                            _v32.player.pos,
+                            pill.pos)),
+                            _v32.player.rad + pill.rad) < 0;
+                         };
+                         var untouched = A2($List.filter,
+                         function ($) {
+                            return $Basics.not(hit($));
+                         },
+                         unculled);
+                         return _U.replace([["player"
+                                            ,A2(stepPlayer,
+                                            event._0._1,
+                                            _v32.player)]
+                                           ,["pills"
+                                            ,A2($List.map,
+                                            stepPill(event._0._0),
+                                            untouched)]],
+                         _v32);
+                      }();}
+                 break;}
+            _U.badCase($moduleName,
+            "between lines 52 and 58");
+         }();
+      }();
+   });
+   var render = F2(function (_v39,
    game) {
       return function () {
-         switch (_v38.ctor)
+         switch (_v39.ctor)
          {case "_Tuple2":
             return function () {
-                 var formPill = function (_v42) {
+                 var formPill = function (_v43) {
                     return function () {
-                       return $Graphics$Collage.move(_v42.pos)($Graphics$Collage.filled(_v42.col)($Graphics$Collage.circle(_v42.rad)));
+                       return $Graphics$Collage.move(_v43.pos)($Graphics$Collage.filled(_v43.col)($Graphics$Collage.circle(_v43.rad)));
                     }();
                  };
                  var forms = A2($List._op["::"],
@@ -2109,33 +2122,33 @@ Elm.Main.make = function (_elm) {
                  formPill,
                  game.pills));
                  return $Graphics$Element.color($Color.lightGray)(A3($Graphics$Element.container,
-                 _v38._0,
-                 _v38._1,
+                 _v39._0,
+                 _v39._1,
                  $Graphics$Element.middle)($Graphics$Element.color($Color.white)(A3($Graphics$Collage.collage,
                  width,
                  height,
                  forms))));
               }();}
          _U.badCase($moduleName,
-         "between lines 67 and 73");
+         "between lines 68 and 74");
       }();
    });
-   var relativeMouse = F2(function (_v44,
-   _v45) {
+   var relativeMouse = F2(function (_v45,
+   _v46) {
       return function () {
-         switch (_v45.ctor)
+         switch (_v46.ctor)
          {case "_Tuple2":
             return function () {
-                 switch (_v44.ctor)
+                 switch (_v45.ctor)
                  {case "_Tuple2":
                     return {ctor: "_Tuple2"
-                           ,_0: _v45._0 - _v44._0
-                           ,_1: 0 - (_v45._1 - _v44._1)};}
+                           ,_0: _v46._0 - _v45._0
+                           ,_1: 0 - (_v46._1 - _v45._1)};}
                  _U.badCase($moduleName,
-                 "on line 15, column 33 to 50");
+                 "on line 11, column 33 to 50");
               }();}
          _U.badCase($moduleName,
-         "on line 15, column 33 to 50");
+         "on line 11, column 33 to 50");
       }();
    });
    var input = A2($Signal._op["~"],
@@ -2156,6 +2169,17 @@ Elm.Main.make = function (_elm) {
    center,
    $Window.dimensions),
    $Mouse.position)));
+   var event = A2($Signal.merge,
+   A2($Signal.map,Tick,input),
+   A2($Signal.map,
+   function ($) {
+      return Add(function (_v53) {
+         return function () {
+            return defaultPill;
+         }();
+      }($));
+   },
+   $Time.every($Time.second * 3)));
    var main = A2($Signal._op["~"],
    A2($Signal._op["<~"],
    render,
@@ -2163,9 +2187,8 @@ Elm.Main.make = function (_elm) {
    A3($Signal.foldp,
    stepGame,
    defaultGame,
-   input));
+   event));
    _elm.Main.values = {_op: _op
-                      ,main: main
                       ,relativeMouse: relativeMouse
                       ,height: height
                       ,width: width
@@ -2181,12 +2204,16 @@ Elm.Main.make = function (_elm) {
                       ,defaultPlayer: defaultPlayer
                       ,Game: Game
                       ,defaultGame: defaultGame
+                      ,Tick: Tick
+                      ,Add: Add
                       ,stepGame: stepGame
                       ,stepPlayer: stepPlayer
                       ,stepPill: stepPill
                       ,render: render
                       ,delta: delta
-                      ,input: input};
+                      ,input: input
+                      ,event: event
+                      ,main: main};
    return _elm.Main.values;
 };
 Elm.Maybe = Elm.Maybe || {};
