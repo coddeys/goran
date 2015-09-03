@@ -7,6 +7,7 @@ import Window
 import List exposing (..)
 import Time exposing (..)
 import Random exposing (..)
+import Text exposing (..)
 
 relativeMouse : (Int, Int) -> (Int, Int) -> (Int, Int)
 relativeMouse (ox, oy) (x,y) = (x - ox, -(y - oy))
@@ -34,7 +35,7 @@ vecMulS (x,y) t = (x*t, y*t)
 type alias Pill = { pos:Vec, vel:Vec, rad:Float, col:Color }
 
 defaultPill = { pos = (0, hHeight)
-              , vel = (0, -30)
+              , vel = (0, -100)
               , rad = 15
               , col = lightRed }
 
@@ -46,8 +47,9 @@ type alias Game = {player:Pill, pills:(List Pill) }
 defaultGame = { player = defaultPlayer,
                 pills  = [] }
 
-newPill : Float -> Pill
-newPill x = { defaultPill | pos <- (x, hHeight) }
+newPill : Float -> Color -> Pill
+newPill x  col = { defaultPill | pos <- (x, hHeight)
+                               , col <- col }
 
 initPill : Signal Random.Seed
 initPill =
@@ -71,33 +73,44 @@ stepPlayer (x, y) p = { p | pos <- (toFloat x, toFloat y) }
 stepPill : Time -> Pill -> Pill
 stepPill t p = { p | pos <- vecAdd p.pos <| vecMulS p.vel t}
 
+tf : Float -> Float -> String -> Form
+tf y scl str = Text.fromString str |> Text.color gray
+                          |> centered
+                          |> toForm
+                          |> scale scl
+                          |> move (0,y)
+
 render : (Int, Int) -> Game -> Element
-render (w, h) game =
+render (w, h) g =
   let formPill {rad, col, pos} = circle rad |> filled col
                                             |> move pos
-      forms = formPill game.player :: List.map formPill game.pills
-  in color lightGray
+      txt   = tf 0 2 "Dima"
+      forms = txt :: (List.map formPill <| g.player :: g.pills)
+  in Graphics.Element.color lightGray
        <| container w h middle
-       <| color white
+       <| Graphics.Element.color white
        <| collage width height forms
 
 delta = (fps 30)
 input = (,) <~ Signal.map inSeconds delta
              ~ sampleOn delta (Signal.map2 relativeMouse (Signal.map center Window.dimensions) Mouse.position)
 
-randx sig = let rnd = randomFloat <~ sig
-                coord r = (width * r) - hWidth
-            in Signal.map coord rnd
-
 randomFloat n =
   let seed = Random.initialSeed n in
   fst (Random.generate (Random.float 0 1) seed)
+
+rand fn sig = Signal.map fn (randomFloat <~ sig)
+
+randX   = rand (\r -> (width * r) - hWidth)
+randCol = rand (\r -> if r < 0.1 then lightBlue else defaultPill.col)
+
+interval = round <~ (every (second * 2))
 
 
 event =
   Signal.merge
           (Signal.map Tick input)
-          (Signal.map (Add << newPill) <| randx (round <~ (every (second * 3))))
+          (Signal.map2 (\x col -> Add (newPill x col)) (randX interval) (randCol interval))
                             
 main : Signal Element
 main = render <~ Window.dimensions ~ foldp stepGame defaultGame event
