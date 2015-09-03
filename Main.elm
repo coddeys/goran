@@ -49,6 +49,10 @@ defaultGame = { player = defaultPlayer,
 newPill : Float -> Pill
 newPill x = { defaultPill | pos <- (x, hHeight) }
 
+initPill : Signal Random.Seed
+initPill =
+  (\(time, _) -> Random.initialSeed (round time)) <~ Time.timestamp (Signal.constant ())
+
 type Event = Tick (Time, (Int, Int)) | Add Pill
 
 stepGame : Event -> Game -> Game
@@ -81,14 +85,19 @@ delta = (fps 30)
 input = (,) <~ Signal.map inSeconds delta
              ~ sampleOn delta (Signal.map2 relativeMouse (Signal.map center Window.dimensions) Mouse.position)
 
-randx sig = let rnd = positiveFloat
+randx sig = let rnd = randomFloat <~ sig
                 coord r = (width * r) - hWidth
             in Signal.map coord rnd
+
+randomFloat n =
+  let seed = Random.initialSeed n in
+  fst (Random.generate (Random.float 0 1) seed)
+
 
 event =
   Signal.merge
           (Signal.map Tick input)
-          (Signal.map (Add << newPill) <| randx (every (second * 3)))
+          (Signal.map (Add << newPill) <| randx (round <~ (every (second * 3))))
                             
 main : Signal Element
 main = render <~ Window.dimensions ~ foldp stepGame defaultGame event

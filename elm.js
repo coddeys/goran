@@ -1915,10 +1915,19 @@ Elm.Main.make = function (_elm) {
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Mouse = Elm.Mouse.make(_elm),
+   $Random = Elm.Random.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
+   var randomFloat = function (n) {
+      return function () {
+         var seed = $Random.initialSeed(n);
+         return $Basics.fst(A2($Random.generate,
+         A2($Random.$float,0,1),
+         seed));
+      }();
+   };
    var delta = $Time.fps(30);
    var stepPlayer = F2(function (_v0,
    p) {
@@ -1931,7 +1940,7 @@ Elm.Main.make = function (_elm) {
                                 ,_1: $Basics.toFloat(_v0._1)}]],
               p);}
          _U.badCase($moduleName,
-         "on line 61, column 23 to 60");
+         "on line 69, column 23 to 60");
       }();
    });
    var Add = function (a) {
@@ -1940,6 +1949,17 @@ Elm.Main.make = function (_elm) {
    var Tick = function (a) {
       return {ctor: "Tick",_0: a};
    };
+   var initPill = A2($Signal._op["<~"],
+   function (_v4) {
+      return function () {
+         switch (_v4.ctor)
+         {case "_Tuple2":
+            return $Random.initialSeed($Basics.round(_v4._0));}
+         _U.badCase($moduleName,
+         "on line 54, column 18 to 48");
+      }();
+   },
+   $Time.timestamp($Signal.constant({ctor: "_Tuple0"})));
    var Game = F2(function (a,b) {
       return {_: {}
              ,pills: b
@@ -1955,61 +1975,61 @@ Elm.Main.make = function (_elm) {
              ,rad: c
              ,vel: b};
    });
-   var vecMulS = F2(function (_v4,
+   var vecMulS = F2(function (_v8,
    t) {
-      return function () {
-         switch (_v4.ctor)
-         {case "_Tuple2":
-            return {ctor: "_Tuple2"
-                   ,_0: _v4._0 * t
-                   ,_1: _v4._1 * t};}
-         _U.badCase($moduleName,
-         "on line 31, column 20 to 28");
-      }();
-   });
-   var vecLen = function (_v8) {
       return function () {
          switch (_v8.ctor)
          {case "_Tuple2":
-            return $Basics.sqrt(_v8._0 * _v8._1 + _v8._1 * _v8._1);}
+            return {ctor: "_Tuple2"
+                   ,_0: _v8._0 * t
+                   ,_1: _v8._1 * t};}
          _U.badCase($moduleName,
-         "on line 28, column 17 to 32");
-      }();
-   };
-   var vecSub = F2(function (_v12,
-   _v13) {
-      return function () {
-         switch (_v13.ctor)
-         {case "_Tuple2":
-            return function () {
-                 switch (_v12.ctor)
-                 {case "_Tuple2":
-                    return {ctor: "_Tuple2"
-                           ,_0: _v12._0 - _v13._0
-                           ,_1: _v12._1 - _v13._1};}
-                 _U.badCase($moduleName,
-                 "on line 25, column 27 to 39");
-              }();}
-         _U.badCase($moduleName,
-         "on line 25, column 27 to 39");
+         "on line 32, column 20 to 28");
       }();
    });
-   var vecAdd = F2(function (_v20,
-   _v21) {
+   var vecLen = function (_v12) {
       return function () {
-         switch (_v21.ctor)
+         switch (_v12.ctor)
+         {case "_Tuple2":
+            return $Basics.sqrt(_v12._0 * _v12._1 + _v12._1 * _v12._1);}
+         _U.badCase($moduleName,
+         "on line 29, column 17 to 32");
+      }();
+   };
+   var vecSub = F2(function (_v16,
+   _v17) {
+      return function () {
+         switch (_v17.ctor)
          {case "_Tuple2":
             return function () {
-                 switch (_v20.ctor)
+                 switch (_v16.ctor)
                  {case "_Tuple2":
                     return {ctor: "_Tuple2"
-                           ,_0: _v20._0 + _v21._0
-                           ,_1: _v20._1 + _v21._1};}
+                           ,_0: _v16._0 - _v17._0
+                           ,_1: _v16._1 - _v17._1};}
                  _U.badCase($moduleName,
-                 "on line 22, column 27 to 39");
+                 "on line 26, column 27 to 39");
               }();}
          _U.badCase($moduleName,
-         "on line 22, column 27 to 39");
+         "on line 26, column 27 to 39");
+      }();
+   });
+   var vecAdd = F2(function (_v24,
+   _v25) {
+      return function () {
+         switch (_v25.ctor)
+         {case "_Tuple2":
+            return function () {
+                 switch (_v24.ctor)
+                 {case "_Tuple2":
+                    return {ctor: "_Tuple2"
+                           ,_0: _v24._0 + _v25._0
+                           ,_1: _v24._1 + _v25._1};}
+                 _U.badCase($moduleName,
+                 "on line 23, column 27 to 39");
+              }();}
+         _U.badCase($moduleName,
+         "on line 23, column 27 to 39");
       }();
    });
    var stepPill = F2(function (t,
@@ -2020,15 +2040,15 @@ Elm.Main.make = function (_elm) {
                          t))]],
       p);
    });
-   var center = function (_v28) {
+   var center = function (_v32) {
       return function () {
-         switch (_v28.ctor)
+         switch (_v32.ctor)
          {case "_Tuple2":
             return {ctor: "_Tuple2"
-                   ,_0: _v28._0 / 2 | 0
-                   ,_1: _v28._1 / 2 | 0};}
+                   ,_0: _v32._0 / 2 | 0
+                   ,_1: _v32._1 / 2 | 0};}
          _U.badCase($moduleName,
-         "on line 17, column 18 to 32");
+         "on line 18, column 18 to 32");
       }();
    };
    var $ = {ctor: "_Tuple2"
@@ -2057,8 +2077,15 @@ Elm.Main.make = function (_elm) {
    var defaultGame = {_: {}
                      ,pills: _L.fromArray([])
                      ,player: defaultPlayer};
+   var newPill = function (x) {
+      return _U.replace([["pos"
+                         ,{ctor: "_Tuple2"
+                          ,_0: x
+                          ,_1: hHeight}]],
+      defaultPill);
+   };
    var stepGame = F2(function (event,
-   _v32) {
+   _v36) {
       return function () {
          return function () {
             switch (event.ctor)
@@ -2066,8 +2093,8 @@ Elm.Main.make = function (_elm) {
                return _U.replace([["pills"
                                   ,A2($List._op["::"],
                                   event._0,
-                                  _v32.pills)]],
-                 _v32);
+                                  _v36.pills)]],
+                 _v36);
                case "Tick":
                switch (event._0.ctor)
                  {case "_Tuple2":
@@ -2077,12 +2104,12 @@ Elm.Main.make = function (_elm) {
                             return _U.cmp($Basics.snd(pill.pos),
                             0 - hHeight) > 0;
                          },
-                         _v32.pills);
+                         _v36.pills);
                          var hit = function (pill) {
                             return _U.cmp(vecLen(A2(vecSub,
-                            _v32.player.pos,
+                            _v36.player.pos,
                             pill.pos)),
-                            _v32.player.rad + pill.rad) < 0;
+                            _v36.player.rad + pill.rad) < 0;
                          };
                          var untouched = A2($List.filter,
                          function ($) {
@@ -2092,28 +2119,28 @@ Elm.Main.make = function (_elm) {
                          return _U.replace([["player"
                                             ,A2(stepPlayer,
                                             event._0._1,
-                                            _v32.player)]
+                                            _v36.player)]
                                            ,["pills"
                                             ,A2($List.map,
                                             stepPill(event._0._0),
                                             untouched)]],
-                         _v32);
+                         _v36);
                       }();}
                  break;}
             _U.badCase($moduleName,
-            "between lines 52 and 58");
+            "between lines 60 and 66");
          }();
       }();
    });
-   var render = F2(function (_v39,
+   var render = F2(function (_v43,
    game) {
       return function () {
-         switch (_v39.ctor)
+         switch (_v43.ctor)
          {case "_Tuple2":
             return function () {
-                 var formPill = function (_v43) {
+                 var formPill = function (_v47) {
                     return function () {
-                       return $Graphics$Collage.move(_v43.pos)($Graphics$Collage.filled(_v43.col)($Graphics$Collage.circle(_v43.rad)));
+                       return $Graphics$Collage.move(_v47.pos)($Graphics$Collage.filled(_v47.col)($Graphics$Collage.circle(_v47.rad)));
                     }();
                  };
                  var forms = A2($List._op["::"],
@@ -2122,33 +2149,46 @@ Elm.Main.make = function (_elm) {
                  formPill,
                  game.pills));
                  return $Graphics$Element.color($Color.lightGray)(A3($Graphics$Element.container,
-                 _v39._0,
-                 _v39._1,
+                 _v43._0,
+                 _v43._1,
                  $Graphics$Element.middle)($Graphics$Element.color($Color.white)(A3($Graphics$Collage.collage,
                  width,
                  height,
                  forms))));
               }();}
          _U.badCase($moduleName,
-         "between lines 68 and 74");
+         "between lines 76 and 82");
       }();
    });
-   var relativeMouse = F2(function (_v45,
-   _v46) {
+   var randx = function (sig) {
       return function () {
-         switch (_v46.ctor)
+         var coord = function (r) {
+            return width * r - hWidth;
+         };
+         var rnd = A2($Signal._op["<~"],
+         randomFloat,
+         sig);
+         return A2($Signal.map,
+         coord,
+         rnd);
+      }();
+   };
+   var relativeMouse = F2(function (_v49,
+   _v50) {
+      return function () {
+         switch (_v50.ctor)
          {case "_Tuple2":
             return function () {
-                 switch (_v45.ctor)
+                 switch (_v49.ctor)
                  {case "_Tuple2":
                     return {ctor: "_Tuple2"
-                           ,_0: _v46._0 - _v45._0
-                           ,_1: 0 - (_v46._1 - _v45._1)};}
+                           ,_0: _v50._0 - _v49._0
+                           ,_1: 0 - (_v50._1 - _v49._1)};}
                  _U.badCase($moduleName,
-                 "on line 11, column 33 to 50");
+                 "on line 12, column 33 to 50");
               }();}
          _U.badCase($moduleName,
-         "on line 11, column 33 to 50");
+         "on line 12, column 33 to 50");
       }();
    });
    var input = A2($Signal._op["~"],
@@ -2171,15 +2211,11 @@ Elm.Main.make = function (_elm) {
    $Mouse.position)));
    var event = A2($Signal.merge,
    A2($Signal.map,Tick,input),
-   A2($Signal.map,
-   function ($) {
-      return Add(function (_v53) {
-         return function () {
-            return defaultPill;
-         }();
-      }($));
-   },
-   $Time.every($Time.second * 3)));
+   $Signal.map(function ($) {
+      return Add(newPill($));
+   })(randx(A2($Signal._op["<~"],
+   $Basics.round,
+   $Time.every($Time.second * 3)))));
    var main = A2($Signal._op["~"],
    A2($Signal._op["<~"],
    render,
@@ -2204,6 +2240,8 @@ Elm.Main.make = function (_elm) {
                       ,defaultPlayer: defaultPlayer
                       ,Game: Game
                       ,defaultGame: defaultGame
+                      ,newPill: newPill
+                      ,initPill: initPill
                       ,Tick: Tick
                       ,Add: Add
                       ,stepGame: stepGame
@@ -2212,6 +2250,8 @@ Elm.Main.make = function (_elm) {
                       ,render: render
                       ,delta: delta
                       ,input: input
+                      ,randx: randx
+                      ,randomFloat: randomFloat
                       ,event: event
                       ,main: main};
    return _elm.Main.values;
@@ -6819,6 +6859,291 @@ Elm.Native.Window.make = function(localRuntime) {
 	};
 };
 
+Elm.Random = Elm.Random || {};
+Elm.Random.make = function (_elm) {
+   "use strict";
+   _elm.Random = _elm.Random || {};
+   if (_elm.Random.values)
+   return _elm.Random.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Random",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm);
+   var magicNum8 = 2147483562;
+   var range = function (_v0) {
+      return function () {
+         return {ctor: "_Tuple2"
+                ,_0: 0
+                ,_1: magicNum8};
+      }();
+   };
+   var magicNum7 = 2137383399;
+   var magicNum6 = 2147483563;
+   var magicNum5 = 3791;
+   var magicNum4 = 40692;
+   var magicNum3 = 52774;
+   var magicNum2 = 12211;
+   var magicNum1 = 53668;
+   var magicNum0 = 40014;
+   var generate = F2(function (_v2,
+   seed) {
+      return function () {
+         switch (_v2.ctor)
+         {case "Generator":
+            return _v2._0(seed);}
+         _U.badCase($moduleName,
+         "on line 246, column 5 to 19");
+      }();
+   });
+   var Seed = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,next: b
+             ,range: d
+             ,split: c
+             ,state: a};
+   });
+   var State = F2(function (a,b) {
+      return {ctor: "State"
+             ,_0: a
+             ,_1: b};
+   });
+   var initState = function (s$) {
+      return function () {
+         var s = A2($Basics.max,
+         s$,
+         0 - s$);
+         var q = s / (magicNum6 - 1) | 0;
+         var s2 = A2($Basics._op["%"],
+         q,
+         magicNum7 - 1);
+         var s1 = A2($Basics._op["%"],
+         s,
+         magicNum6 - 1);
+         return A2(State,s1 + 1,s2 + 1);
+      }();
+   };
+   var next = function (_v5) {
+      return function () {
+         switch (_v5.ctor)
+         {case "State":
+            return function () {
+                 var k$ = _v5._1 / magicNum3 | 0;
+                 var s2$ = magicNum4 * (_v5._1 - k$ * magicNum3) - k$ * magicNum5;
+                 var s2$$ = _U.cmp(s2$,
+                 0) < 0 ? s2$ + magicNum7 : s2$;
+                 var k = _v5._0 / magicNum1 | 0;
+                 var s1$ = magicNum0 * (_v5._0 - k * magicNum1) - k * magicNum2;
+                 var s1$$ = _U.cmp(s1$,
+                 0) < 0 ? s1$ + magicNum6 : s1$;
+                 var z = s1$$ - s2$$;
+                 var z$ = _U.cmp(z,
+                 1) < 0 ? z + magicNum8 : z;
+                 return {ctor: "_Tuple2"
+                        ,_0: z$
+                        ,_1: A2(State,s1$$,s2$$)};
+              }();}
+         _U.badCase($moduleName,
+         "between lines 290 and 299");
+      }();
+   };
+   var split = function (_v9) {
+      return function () {
+         switch (_v9.ctor)
+         {case "State":
+            return function () {
+                 var _raw = $Basics.snd(next(_v9)),
+                 $ = _raw.ctor === "State" ? _raw : _U.badCase($moduleName,
+                 "on line 306, column 25 to 38"),
+                 t1 = $._0,
+                 t2 = $._1;
+                 var new_s2 = _U.eq(_v9._1,
+                 1) ? magicNum7 - 1 : _v9._1 - 1;
+                 var new_s1 = _U.eq(_v9._0,
+                 magicNum6 - 1) ? 1 : _v9._0 + 1;
+                 return {ctor: "_Tuple2"
+                        ,_0: A2(State,new_s1,t2)
+                        ,_1: A2(State,t1,new_s2)};
+              }();}
+         _U.badCase($moduleName,
+         "between lines 304 and 308");
+      }();
+   };
+   var initialSeed = function (n) {
+      return A4(Seed,
+      initState(n),
+      next,
+      split,
+      range);
+   };
+   var Generator = function (a) {
+      return {ctor: "Generator"
+             ,_0: a};
+   };
+   var customGenerator = function (generate) {
+      return Generator(generate);
+   };
+   var listHelp = F4(function (list,
+   n,
+   generate,
+   seed) {
+      return _U.cmp(n,
+      1) < 0 ? {ctor: "_Tuple2"
+               ,_0: $List.reverse(list)
+               ,_1: seed} : function () {
+         var $ = generate(seed),
+         value = $._0,
+         seed$ = $._1;
+         return A4(listHelp,
+         A2($List._op["::"],value,list),
+         n - 1,
+         generate,
+         seed$);
+      }();
+   });
+   var list = F2(function (n,
+   _v13) {
+      return function () {
+         switch (_v13.ctor)
+         {case "Generator":
+            return Generator(function (seed) {
+                 return A4(listHelp,
+                 _L.fromArray([]),
+                 n,
+                 _v13._0,
+                 seed);
+              });}
+         _U.badCase($moduleName,
+         "between lines 182 and 183");
+      }();
+   });
+   var pair = F2(function (_v16,
+   _v17) {
+      return function () {
+         switch (_v17.ctor)
+         {case "Generator":
+            return function () {
+                 switch (_v16.ctor)
+                 {case "Generator":
+                    return Generator(function (seed) {
+                         return function () {
+                            var $ = _v16._0(seed),
+                            left = $._0,
+                            seed$ = $._1;
+                            var $ = _v17._0(seed$),
+                            right = $._0,
+                            seed$$ = $._1;
+                            return {ctor: "_Tuple2"
+                                   ,_0: {ctor: "_Tuple2"
+                                        ,_0: left
+                                        ,_1: right}
+                                   ,_1: seed$$};
+                         }();
+                      });}
+                 _U.badCase($moduleName,
+                 "between lines 159 and 163");
+              }();}
+         _U.badCase($moduleName,
+         "between lines 159 and 163");
+      }();
+   });
+   var minInt = -2147483648;
+   var maxInt = 2147483647;
+   var iLogBase = F2(function (b,
+   i) {
+      return _U.cmp(i,
+      b) < 0 ? 1 : 1 + A2(iLogBase,
+      b,
+      i / b | 0);
+   });
+   var $int = F2(function (a,b) {
+      return Generator(function (seed) {
+         return function () {
+            var base = 2147483561;
+            var f = F3(function (n,
+            acc,
+            state) {
+               return function () {
+                  switch (n)
+                  {case 0: return {ctor: "_Tuple2"
+                                  ,_0: acc
+                                  ,_1: state};}
+                  return function () {
+                     var $ = seed.next(state),
+                     x = $._0,
+                     state$ = $._1;
+                     return A3(f,
+                     n - 1,
+                     x + acc * base,
+                     state$);
+                  }();
+               }();
+            });
+            var $ = _U.cmp(a,
+            b) < 0 ? {ctor: "_Tuple2"
+                     ,_0: a
+                     ,_1: b} : {ctor: "_Tuple2"
+                               ,_0: b
+                               ,_1: a},
+            lo = $._0,
+            hi = $._1;
+            var k = hi - lo + 1;
+            var n = A2(iLogBase,base,k);
+            var $ = A3(f,n,1,seed.state),
+            v = $._0,
+            state$ = $._1;
+            return {ctor: "_Tuple2"
+                   ,_0: lo + A2($Basics._op["%"],
+                   v,
+                   k)
+                   ,_1: _U.replace([["state"
+                                    ,state$]],
+                   seed)};
+         }();
+      });
+   });
+   var $float = F2(function (a,b) {
+      return Generator(function (seed) {
+         return function () {
+            var $ = A2(generate,
+            A2($int,minInt,maxInt),
+            seed),
+            number = $._0,
+            seed$ = $._1;
+            var negativeOneToOne = $Basics.toFloat(number) / $Basics.toFloat(maxInt - minInt);
+            var $ = _U.cmp(a,
+            b) < 0 ? {ctor: "_Tuple2"
+                     ,_0: a
+                     ,_1: b} : {ctor: "_Tuple2"
+                               ,_0: b
+                               ,_1: a},
+            lo = $._0,
+            hi = $._1;
+            var scaled = (lo + hi) / 2 + (hi - lo) * negativeOneToOne;
+            return {ctor: "_Tuple2"
+                   ,_0: scaled
+                   ,_1: seed$};
+         }();
+      });
+   });
+   _elm.Random.values = {_op: _op
+                        ,$int: $int
+                        ,$float: $float
+                        ,list: list
+                        ,pair: pair
+                        ,minInt: minInt
+                        ,maxInt: maxInt
+                        ,generate: generate
+                        ,initialSeed: initialSeed
+                        ,customGenerator: customGenerator
+                        ,Seed: Seed};
+   return _elm.Random.values;
+};
 Elm.Result = Elm.Result || {};
 Elm.Result.make = function (_elm) {
    "use strict";

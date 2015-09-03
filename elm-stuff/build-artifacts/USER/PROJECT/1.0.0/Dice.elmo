@@ -1,0 +1,37 @@
+Elm.Dice = Elm.Dice || {};
+Elm.Dice.make = function (_elm) {
+   "use strict";
+   _elm.Dice = _elm.Dice || {};
+   if (_elm.Dice.values)
+   return _elm.Dice.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Dice",
+   $Basics = Elm.Basics.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Random = Elm.Random.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Time = Elm.Time.make(_elm);
+   var randomFloat = function (n) {
+      return function () {
+         var seed = $Random.initialSeed(n);
+         return $Basics.fst(A2($Random.generate,
+         A2($Random.$float,0,1),
+         seed));
+      }();
+   };
+   var main = $Signal.map($Graphics$Element.show)(A2($Signal._op["<~"],
+   randomFloat,
+   A2($Signal._op["<~"],
+   $Basics.round,
+   $Time.every($Time.second * 3))));
+   _elm.Dice.values = {_op: _op
+                      ,main: main
+                      ,randomFloat: randomFloat};
+   return _elm.Dice.values;
+};

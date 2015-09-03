@@ -14,14 +14,27 @@ Elm.Repl.make = function (_elm) {
    $Maybe = Elm.Maybe.make(_elm),
    $Random = Elm.Random.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Time = Elm.Time.make(_elm);
+   $Signal = Elm.Signal.make(_elm);
+   var x = A2($Random.$int,1,6);
    var tsol = {ctor: "_Tuple0"};
-   var deltron3030 = A2($Signal._op["<~"],
-   $Random.$float,
-   $Time.every($Time.second * 3));
+   var rnd = function (sig) {
+      return $Random.$float(sig);
+   };
+   var deltron3030 = x;
+   var coord = function (r) {
+      return 400 * r - 200;
+   };
+   var randx = function (sig) {
+      return A2($Signal.map,
+      coord,
+      sig);
+   };
    _elm.Repl.values = {_op: _op
+                      ,coord: coord
                       ,deltron3030: deltron3030
-                      ,tsol: tsol};
+                      ,randx: randx
+                      ,rnd: rnd
+                      ,tsol: tsol
+                      ,x: x};
    return _elm.Repl.values;
 };
